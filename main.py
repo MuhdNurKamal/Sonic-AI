@@ -31,7 +31,7 @@ plt.ion()
 
 # if gpu is to be used
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+print(torch.cuda.is_available())
 resize = T.Compose([T.ToPILImage(),
                     T.Resize(40, interpolation=Image.CUBIC),
                     T.ToTensor()])
@@ -63,7 +63,7 @@ init_screen = get_screen()
 _, _, screen_height, screen_width = init_screen.shape
 
 # Get number of actions from gym action space
-n_actions = env.action_space.n
+n_actions = pow(2, env.action_space.n)
 
 policy_net = DQN(screen_height, screen_width, n_actions).to(device)
 target_net = DQN(screen_height, screen_width, n_actions).to(device)
@@ -92,6 +92,7 @@ def select_action(state):
             return policy_net(state).max(1)[1].view(1, 1)
     else:
         return torch.tensor([[random.randrange(n_actions)]], device=device, dtype=torch.long)
+
 
 
 def plot_durations():
@@ -158,6 +159,7 @@ def optimize_model():
         param.grad.data.clamp_(-1, 1)
     optimizer.step()
 
+
 def main():
     num_episodes = 50
     for i_episode in range(num_episodes):
@@ -167,10 +169,18 @@ def main():
         current_screen = get_screen()
         state = current_screen - last_screen
         for t in count():
-            env.render()
             # Select and perform an action
             action = select_action(state)
             _, reward, done, _ = env.step(action)
+            # print(action)
+            # print(env.action_to_array(action))
+            # print(env.action_space)
+            # for i in range(12):
+            #     a = env.action_space.sample()
+            #     print(a)
+            #     print(env.get_action_meaning(a))
+            env.render()
+
             reward = torch.tensor([reward], device=device)
 
             # Observe new state
