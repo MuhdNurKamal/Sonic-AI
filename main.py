@@ -1,76 +1,35 @@
-import math
-import random
-from itertools import count
-
-import matplotlib
-import matplotlib.pyplot as plt
+import gym
 import retro
-import torch
+import os
+from baselines import deepq
+from sonic_util import make_env
 
-from screen_utils import get_screen
-from dqn_agent import DQNAgent
 
-env = retro.make(game='SonicTheHedgehog-Genesis', state='GreenHillZone.Act1').unwrapped
-# set up matplotlib
-matplotlib.use('TkAgg')
-is_ipython = 'inline' in matplotlib.get_backend()
-if is_ipython:
-    from IPython import display
-
-plt.ion()
-
-# if gpu is to be used
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Using CUDA: ", torch.cuda.is_available())
-
-episode_durations = []
+def callback(lcl, _glb):
+    # stop training if reward exceeds 10000
+    is_solved = lcl['t'] > 100 and sum(lcl['episode_rewards'][-101:-1]) / 100 >= 10000
+    return is_solved
 
 
 def main():
-    # Change agent here
-    agent = DQNAgent(env, device)
-    num_episodes = 50
-    for i_episode in range(num_episodes):
-        # Initialize the environment and state
-        env.reset()
-        last_screen = get_screen(env, device)
-        current_screen = get_screen(env, device)
-        state = current_screen - last_screen
-        for t in count():
-            # Select and perform an action
-            action = agent.select_action(state)
-            _, reward, done, _ = env.step(action)
-
-            env.render()
-
-            reward = torch.tensor([reward], device=device)
-
-            # Observe new state
-            last_screen = current_screen
-            current_screen = get_screen(env, device)
-            if not done:
-                next_state = current_screen - last_screen
-            else:
-                next_state = None
-
-            agent.post_action_update(state, action, next_state, reward)
-
-            # Move to the next state
-            state = next_state
-
-            # Perform one step of the optimization (on the target network)
-            agent.optimize_model(state)
-            if done:
-                episode_durations.append(t + 1)
-                # plot_durations()
-                break
-
-        agent.post_episode_update(i_episode=i_episode)
-
-    print('Complete')
-    env.close()
-    plt.ioff()
-    plt.show()
+    env = make_env(stack=True, scale_rew=True)
+    load_path = "dqn_sonic.pkl" if os.path.isfile("./dqn_sonic.pkl") else None
+    if load_path:
+        print("Loading from " + "dqn_sonic.pkl")
+    act = deepq.learn(
+        env,
+        network='mlp',
+        lr=1e-3,
+        total_timesteps=100000,
+        buffer_size=50000,
+        exploration_fraction=0.1,
+        exploration_final_eps=0.02,
+        print_freq=10,
+        callback=callback,
+        load_path=load_path
+    )
+    print("Saving model to dqn_sonic.pkl")
+    act.save("dqn_sonic.pkl")
 
 
 if __name__ == '__main__':
