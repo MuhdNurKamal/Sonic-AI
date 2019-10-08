@@ -3,19 +3,22 @@ import retro
 
 from baselines import deepq
 from sonic_util import make_env
+from stable_baselines import DQN
+from stable_baselines.deepq.policies import CnnPolicy
+
 
 def main():
     env = make_env(stack=True, scale_rew=True)
-    act = deepq.learn(env, network='mlp', total_timesteps=0, load_path="dqn_sonic.pkl")
+    saved_model_filename = "sonic_stable_dqn"
 
+    model = DQN(CnnPolicy, env, verbose=1)
+    model.load(saved_model_filename)
+
+    obs = env.reset()
     while True:
-        obs, done = env.reset(), False
-        episode_rew = 0
-        while not done:
-            env.render()
-            obs, rew, done, _ = env.step(act(obs[None])[0])
-            episode_rew += rew
-        print("Episode reward", episode_rew)
+        action, _states = model.predict(obs)
+        obs, rewards, dones, info = env.step(action)
+        env.render()
 
 
 if __name__ == '__main__':
