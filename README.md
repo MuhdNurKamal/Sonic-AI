@@ -22,11 +22,20 @@ sudo apt-get update && sudo apt-get install cmake libopenmpi-dev python3-dev zli
 ```
 pip install git+https://github.com/openai/baselines.git
 ```
-4. Install Other dependencies
+4. Install Tensorflow
+Choice A: For CPU (slower)
+```
+pip install tensorflow==1.15.0rc2
+```
+Choice B: For Nvidia Cuda GPU (faster)
+```
+pip install tensorflow-gpu==1.15.0rc2
+```
+5. Install Other dependencies
 ```
 pip install -r requirements.txt
 ```
-5. Import sonic roms
+6. Import sonic roms
 ```
 python -m retro.import ./Roms
 ```
