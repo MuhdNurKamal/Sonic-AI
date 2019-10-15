@@ -26,7 +26,10 @@ pip install git+https://github.com/openai/baselines.git
 ```
 pip install -r requirements.txt
 ```
-
+5. Import sonic roms
+```
+python -m retro.import ./Roms
+```
 
 ## Training model
 ```
