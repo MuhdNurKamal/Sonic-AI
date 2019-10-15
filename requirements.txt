@@ -1,7 +1,6 @@
 absl-py==0.8.1
 astor==0.8.0
 atari-py==0.2.6
-baselines==0.1.6
 Click==7.0
 cloudpickle==1.2.2
 cycler==0.10.0
