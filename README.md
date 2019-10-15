@@ -23,11 +23,11 @@ sudo apt-get update && sudo apt-get install cmake libopenmpi-dev python3-dev zli
 pip install git+https://github.com/openai/baselines.git
 ```
 4. Install Tensorflow
-Choice A: For CPU (slower)
+- Choice A: For CPU (slower)
 ```
 pip install tensorflow==1.15.0rc2
 ```
-Choice B: For Nvidia Cuda GPU (faster)
+- Choice B: For Nvidia Cuda GPU (faster)
 ```
 pip install tensorflow-gpu==1.15.0rc2
 ```
