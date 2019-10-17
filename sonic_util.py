@@ -5,14 +5,14 @@ Environments and wrappers for Sonic training.
 import gym
 import numpy as np
 import retro
-
 from baselines.common.atari_wrappers import WarpFrame, FrameStack
-
+from stable_baselines.bench import Monitor
+import os
 
 # import gym_remote.client as grc
 
 
-def make_env(stack=True, scale_rew=True):
+def make_env(stack=True, scale_rew=True, log_dir=""):
     """
     Create an environment with some standard wrappers.
     """
@@ -23,6 +23,10 @@ def make_env(stack=True, scale_rew=True):
     env = WarpFrame(env)
     if stack:
         env = FrameStack(env, 4)
+    if log_dir:
+        os.makedirs(log_dir, exist_ok=True)
+        env = Monitor(env, log_dir)
+
     return env
 
 
