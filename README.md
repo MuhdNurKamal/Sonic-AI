@@ -18,11 +18,7 @@ python3 -m venv venv
 ```
 sudo apt-get update && sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev
 ```
-3.Install baselines (Current baselines in pip is outdated)
-```
-pip install git+https://github.com/openai/baselines.git
-```
-4. Install Tensorflow
+3. Install Tensorflow
 - Choice A: For CPU (slower)
 ```
 pip install tensorflow==1.15.0rc2
@@ -30,6 +26,10 @@ pip install tensorflow==1.15.0rc2
 - Choice B: For Nvidia Cuda GPU (faster)
 ```
 pip install tensorflow-gpu==1.15.0rc2
+```
+4.Install baselines (Current baselines in pip is outdated)
+```
+pip install git+https://github.com/openai/baselines.git
 ```
 5. Install Other dependencies
 ```
