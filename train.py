@@ -26,7 +26,7 @@ def callback(_locals, _globals):
     # Log scalar values
     if 'info' in _locals.keys():
         for key, value in _locals['info'].items():
-            summary = tf.Summary(value=[tf.Summary.Value(tag=key, simple_value=value)])
+            summary = tf.Summary(value=[tf.Summary.Value(tag="info/" + key, simple_value=value)])
             _locals['writer'].add_summary(summary, self_.num_timesteps)
 
     # Returning False will stop training early
