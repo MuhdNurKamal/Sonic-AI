@@ -7,6 +7,7 @@ import numpy as np
 import retro
 from baselines.common.atari_wrappers import WarpFrame, FrameStack
 
+
 def make_env(stack=True, scale_rew=True, log_dir=""):
     """
     Create an environment with some standard wrappers.
