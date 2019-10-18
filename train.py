@@ -4,10 +4,19 @@ from stable_baselines.deepq.policies import CnnPolicy
 from stable_baselines import DQN
 import numpy as np
 import tensorflow as tf
+import logging
+import sys
+
+# Setup logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger(__name__)
+
 
 best_mean_reward, n_steps = -np.inf, 0
 tensorboard_log = './tb_log'
-total_timesteps = 5000
+total_timesteps = 2000
 
 
 def callback(_locals, _globals):
@@ -21,7 +30,7 @@ def callback(_locals, _globals):
     self_ = _locals['self']
     # Print stats every 1000 calls
     if self_.num_timesteps % 1000 == 0:
-        print("n steps: ", self_.num_timesteps)
+        logging.info("n steps: " + str(self_.num_timesteps))
 
     # Log scalar values
     if 'info' in _locals.keys():
