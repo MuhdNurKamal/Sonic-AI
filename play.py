@@ -8,7 +8,7 @@ from stable_baselines.deepq.policies import CnnPolicy
 
 
 def main():
-    env = make_env(stack=True, scale_rew=True)
+    env = make_env()
     saved_model_filename = "sonic_stable_dqn"
 
     model = DQN(CnnPolicy, env, verbose=1)

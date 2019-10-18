@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG,
 logger = logging.getLogger(__name__)
 
 
-best_mean_reward, n_steps = -np.inf, 0
+best_mean_reward = -np.inf
 tensorboard_log = './tb_log'
 total_timesteps = 2000
 
@@ -51,6 +51,7 @@ def main():
 
     # Learn from previous run
     if os.path.isfile(saved_model_filename):
+        logging.info("Loading model from file: " + saved_model_filename)
         model.load(saved_model_filename)
 
     model.learn(total_timesteps=total_timesteps, callback=callback)
