@@ -40,10 +40,21 @@ pip install -r requirements.txt
 python -m retro.import ./Roms
 ```
 
+
 ## Training model
 ```
 python train.py
 ```
+
+
+## Monitoring
+Monitoring is done through tensorboard. Read the Getting Started for more info https://www.tensorflow.org/tensorboard/get_started
+To run TensorBoard run the command below, make sure venv is activated
+
+```
+tensorboard --logdir ./tb_log
+```
+This will run tensorboard, and tensorboard will search for Events from the specified directory
 
 
 ## Play sonic with trained model
