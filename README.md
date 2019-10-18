@@ -10,11 +10,11 @@ python3 -m venv venv
 
 ## Setup (Linux)
 
-1.Activate virtual environment
+1. Activate virtual environment
 ```
 . venv/bin/activate
 ```
-2.Install baselines dependencies
+2. Install baselines dependencies
 ```
 sudo apt-get update && sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev
 ```
@@ -27,7 +27,7 @@ pip install tensorflow==1.15.0rc2
 ```
 pip install tensorflow-gpu==1.15.0rc2
 ```
-4.Install baselines (Current baselines in pip is outdated)
+4. Install baselines (Current baselines in pip is outdated)
 ```
 pip install git+https://github.com/openai/baselines.git
 ```
@@ -48,7 +48,7 @@ python train.py
 
 
 ## Monitoring
-Monitoring is done through tensorboard. Read the Getting Started for more info https://www.tensorflow.org/tensorboard/get_started
+Monitoring is done through tensorboard.
 To run TensorBoard run the command below, make sure venv is activated
 
 ```
