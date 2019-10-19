@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 best_mean_reward = -np.inf
 TENSORBOARD_LOG_DIR = './tb_log'
-TOTAL_TIMESTEPS = 1e7
+TOTAL_TIMESTEPS = 10000
 STEP_LOGGING_FREQ = 1000
 SAVING_FREQ = 1000
 REPLAY_BUFFER_SIZE = 1e6
@@ -43,7 +43,7 @@ def callback(_locals, _globals):
     # Save every step_logging_freq
     if self_.num_timesteps % SAVING_FREQ == 0:
         logging.info("Saving model at n steps: " + str(self_.num_timesteps))
-        model.save("sonic_stable_dqn")
+        model.save(saved_model_filename)
 
     # Log scalar values
     if 'info' in _locals.keys():
@@ -64,7 +64,7 @@ def main():
         logging.info("Creating model from scratch...")
 
     model.learn(total_timesteps=TOTAL_TIMESTEPS, callback=callback)
-    model.save("sonic_stable_dqn")
+    model.save(saved_model_filename)
 
     obs = env.reset()
 
