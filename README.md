@@ -39,8 +39,11 @@ pip install -r requirements.txt
 ```
 python -m retro.import ./Roms
 ```
-
-
+7. Install retro-contest
+```
+git clone --recursive https://github.com/openai/retro-contest.git
+pip install -e "retro-contest/support[docker,rest]"
+```
 ## Training model
 ```
 python train.py
