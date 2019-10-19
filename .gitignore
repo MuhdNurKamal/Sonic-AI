@@ -3,3 +3,4 @@ venv/
 .idea/
 tb_log/
 sonic_stable_dqn.zip
+retro-contest/
