@@ -4,7 +4,7 @@ Environments and wrappers for Sonic training.
 
 import gym
 import numpy as np
-import retro
+from retro_contest.local import make
 from baselines.common.atari_wrappers import WarpFrame, FrameStack
 
 
@@ -12,7 +12,7 @@ def make_env(stack=True, scale_rew=True):
     """
     Create an environment with some standard wrappers.
     """
-    env = retro.make(game='SonicTheHedgehog-Genesis', state='GreenHillZone.Act1')
+    env = make(game='SonicTheHedgehog-Genesis', state='GreenHillZone.Act1')
 
     env = SonicDiscretizer(env)
     if scale_rew:

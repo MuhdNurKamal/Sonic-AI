@@ -11,14 +11,16 @@ def main():
     env = make_env()
     saved_model_filename = "sonic_stable_dqn"
 
-    model = DQN(CnnPolicy, env, verbose=1)
-    model.load(saved_model_filename)
+    model = DQN.load(saved_model_filename)
 
     obs = env.reset()
     while True:
         action, _states = model.predict(obs)
-        obs, rewards, dones, info = env.step(action)
-        env.render()
+        obs, rewards, done, info = env.step(action)
+        if done:
+            env.reset()
+        else:
+            env.render()
 
 
 if __name__ == '__main__':
