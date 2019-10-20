@@ -22,7 +22,8 @@ def main():
 
     fps = 60
     frames_per_timestep = 4
-    wait_time = frames_per_timestep / fps
+    speed_up_factor = 1.5
+    wait_time = frames_per_timestep / fps / speed_up_factor
     while True:
         t1 = time.time()
 
