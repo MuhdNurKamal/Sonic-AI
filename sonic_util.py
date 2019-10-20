@@ -8,11 +8,12 @@ from retro_contest.local import make
 from baselines.common.atari_wrappers import WarpFrame, FrameStack
 
 
-def make_env(stack=True, scale_rew=True):
+def make_env(stack=True, scale_rew=True, zone="GreenHillZone", act=1):
     """
     Create an environment with some standard wrappers.
     """
-    env = make(game='SonicTheHedgehog-Genesis', state='GreenHillZone.Act1')
+    state = zone + ".Act" + str(act)
+    env = make(game='SonicTheHedgehog-Genesis', state=state)
 
     env = SonicDiscretizer(env)
     if scale_rew:

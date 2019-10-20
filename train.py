@@ -1,11 +1,14 @@
+import logging
 import os
-from sonic_util import make_env
-from stable_baselines.deepq.policies import CnnPolicy
-from stable_baselines import DQN
+import random
+import time
+
 import numpy as np
 import tensorflow as tf
-import logging
-import sys
+from stable_baselines import DQN
+from stable_baselines.deepq.policies import CnnPolicy
+
+from sonic_util import make_env
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG,
@@ -13,6 +16,7 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
+random.seed(time.time())
 
 best_mean_reward = -np.inf
 TENSORBOARD_LOG_DIR = './tb_log'
@@ -22,7 +26,7 @@ SAVING_FREQ = 1000
 REPLAY_BUFFER_SIZE = 1e6
 
 saved_model_filename = "sonic_stable_dqn.zip"
-env = make_env()
+env = make_env(act=random.randint(1, 3))
 model = DQN(CnnPolicy, env, verbose=1, tensorboard_log=TENSORBOARD_LOG_DIR, buffer_size=REPLAY_BUFFER_SIZE)
 
 
@@ -32,10 +36,10 @@ def callback(_locals, _globals):
     :param _locals: (dict)
     :param _globals: (dict)
     """
-    global best_mean_reward
+    global best_mean_reward, env
 
     self_ = _locals['self']
-
+    env.render()
     # Log every step_logging_freq
     if self_.num_timesteps % STEP_LOGGING_FREQ == 0:
         logging.info("At n steps: " + str(self_.num_timesteps))
@@ -50,6 +54,9 @@ def callback(_locals, _globals):
         for key, value in _locals['info'].items():
             summary = tf.Summary(value=[tf.Summary.Value(tag="info/" + key, simple_value=value)])
             _locals['writer'].add_summary(summary, self_.num_timesteps)
+
+    if 'done' in _locals.keys() and _locals['done']:
+        env.load_state("GreenHillZone.Act" + str(random.randint(1, 3)))
 
     # Returning False will stop training early
     return True
