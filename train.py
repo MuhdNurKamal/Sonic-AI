@@ -39,7 +39,7 @@ def callback(_locals, _globals):
     global best_mean_reward, env
 
     self_ = _locals['self']
-    env.render()
+
     # Log every step_logging_freq
     if self_.num_timesteps % STEP_LOGGING_FREQ == 0:
         logging.info("At n steps: " + str(self_.num_timesteps))
