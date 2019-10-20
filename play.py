@@ -1,10 +1,7 @@
-import gym
-import retro
-
-from baselines import deepq
+import sys
+from os.path import isfile
 from sonic_util import make_env
 from stable_baselines import DQN
-from stable_baselines.deepq.policies import CnnPolicy
 import logging
 
 # Setup logging
@@ -16,10 +13,9 @@ logger = logging.getLogger(__name__)
 
 def main():
     env = make_env()
-    saved_model_filename = "sonic_stable_dqn"
     max_screen_x = 0
 
-    model = DQN.load(saved_model_filename)
+    model = DQN.load(saved_model_file_path)
 
     obs = env.reset()
     while True:
@@ -36,4 +32,16 @@ def main():
 
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        logger.warning("Usage: python train.py saved_model_file_path")
+        exit()
+
+    saved_model_file_path = sys.argv[1]
+
+    if isfile(saved_model_file_path):
+        logger.info("Loading from " + saved_model_file_path)
+    else:
+        logger.warning("No such file " + saved_model_file_path)
+        exit()
+
     main()
