@@ -64,3 +64,7 @@ This will run tensorboard, and tensorboard will search for Events from the speci
 ```
 python play.py
 ```
+
+
+## Hall of Fame
+Models that has successfully completed a level are stored inside saved_models
