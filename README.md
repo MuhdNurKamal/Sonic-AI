@@ -61,10 +61,14 @@ This will run tensorboard, and tensorboard will search for Events from the speci
 
 
 ## Play sonic with trained model
+Replace saved_model_filename with actual name of the saved model zip file. E.g. sonic_stable_dqn.zip 
 ```
-python play.py
-```
+python play.py saved_model_filename
 
+```
+```
+python slow_play.py saved_model_filename
+```
 
 ## Hall of Fame
 Models that has successfully completed a level are stored inside saved_models

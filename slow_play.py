@@ -51,7 +51,7 @@ def main():
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        logger.warning("Usage: python train.py saved_model_file_path")
+        logger.warning("Usage: python slow_play.py saved_model_file_path")
         exit()
 
     saved_model_file_path = sys.argv[1]
