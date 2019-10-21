@@ -6,13 +6,16 @@ from stable_baselines import DQN
 import numpy as np
 import tensorflow as tf
 import logging
+from sys import argv
 
 TENSORBOARD_LOG_DIR = './tb_log'
 TOTAL_TIMESTEPS = 5000
 STEP_LOGGING_FREQ = 1000
 SAVING_FREQ = 1000
 REPLAY_BUFFER_SIZE = 1e6
-SAVED_MODEL_FILENAME = "sonic_stable_dqn.zip"
+DEFAULT_SAVED_MODEL_FILENAME = "sonic_stable_dqn.zip"
+DECORATOR = ("*" * 100 + "\n") * 5
+saved_model_name = DEFAULT_SAVED_MODEL_FILENAME
 
 
 def callback(_locals, _globals):
@@ -30,7 +33,7 @@ def callback(_locals, _globals):
     # Save every step_logging_freq
     if self_.num_timesteps % SAVING_FREQ == 0:
         logging.info("Saving model at n steps: " + str(self_.num_timesteps))
-        model.save(SAVED_MODEL_FILENAME)
+        model.save(saved_model_name)
 
     # Log scalar values
     if 'info' in _locals.keys():
@@ -44,24 +47,8 @@ def callback(_locals, _globals):
 
 def main():
     global model
-    # Learn from previous run
-    if isfile(SAVED_MODEL_FILENAME):
-        logging.info("Loading model from file: " + SAVED_MODEL_FILENAME)
-        model = DQN.load(SAVED_MODEL_FILENAME,
-                         env=env,
-                         verbose=0,
-                         tensorboard_log=TENSORBOARD_LOG_DIR,
-                         buffer_size=REPLAY_BUFFER_SIZE)
-    else:
-        logging.info("Creating model from scratch...")
-        model = DQN(CnnPolicy,
-                    env,
-                    verbose=0,
-                    tensorboard_log=TENSORBOARD_LOG_DIR,
-                    buffer_size=REPLAY_BUFFER_SIZE)
-
     model.learn(total_timesteps=TOTAL_TIMESTEPS, callback=callback)
-    model.save(SAVED_MODEL_FILENAME)
+    model.save(saved_model_name)
 
     obs = env.reset()
 
@@ -75,4 +62,37 @@ if __name__ == '__main__':
 
     env = make_env()
     model = None
+
+    print(DECORATOR)
+    if len(argv) == 1:
+        if isfile(saved_model_name):
+            logging.info("Loading model from file: " + saved_model_name)
+            model = DQN.load(saved_model_name,
+                             env=env,
+                             verbose=0,
+                             tensorboard_log=TENSORBOARD_LOG_DIR,
+                             buffer_size=REPLAY_BUFFER_SIZE)
+        else:
+            logging.info("Creating model from scratch...")
+            model = DQN(CnnPolicy,
+                        env,
+                        verbose=0,
+                        tensorboard_log=TENSORBOARD_LOG_DIR,
+                        buffer_size=REPLAY_BUFFER_SIZE)
+    elif len(argv) == 2:
+        saved_model_name = argv[1]
+        if isfile(saved_model_name) and saved_model_name.endswith(".zip"):
+            logging.info("Loading model from file: " + saved_model_name)
+            model = DQN.load(saved_model_name,
+                             env=env,
+                             verbose=0,
+                             tensorboard_log=TENSORBOARD_LOG_DIR,
+                             buffer_size=REPLAY_BUFFER_SIZE)
+        else:
+            logger.warning("Usage: \npython train.py \nOR\npython train.py model_to_load_from.zip")
+            exit()
+    else:
+        logger.warning("Usage: \npython train.py \nOR\npython train.py model_to_load_from.zip")
+        exit()
+
     main()
