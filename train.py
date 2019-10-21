@@ -1,29 +1,18 @@
-import os
+from os.path import isfile
+
 from sonic_util import make_env
 from stable_baselines.deepq.policies import CnnPolicy
 from stable_baselines import DQN
 import numpy as np
 import tensorflow as tf
 import logging
-import sys
 
-# Setup logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
-logger = logging.getLogger(__name__)
-
-
-best_mean_reward = -np.inf
 TENSORBOARD_LOG_DIR = './tb_log'
-TOTAL_TIMESTEPS = 10000
+TOTAL_TIMESTEPS = 5000
 STEP_LOGGING_FREQ = 1000
 SAVING_FREQ = 1000
 REPLAY_BUFFER_SIZE = 1e6
-
-saved_model_filename = "sonic_stable_dqn.zip"
-env = make_env()
-model = DQN(CnnPolicy, env, verbose=1, tensorboard_log=TENSORBOARD_LOG_DIR, buffer_size=REPLAY_BUFFER_SIZE)
+SAVED_MODEL_FILENAME = "sonic_stable_dqn.zip"
 
 
 def callback(_locals, _globals):
@@ -32,8 +21,6 @@ def callback(_locals, _globals):
     :param _locals: (dict)
     :param _globals: (dict)
     """
-    global best_mean_reward
-
     self_ = _locals['self']
 
     # Log every step_logging_freq
@@ -43,7 +30,7 @@ def callback(_locals, _globals):
     # Save every step_logging_freq
     if self_.num_timesteps % SAVING_FREQ == 0:
         logging.info("Saving model at n steps: " + str(self_.num_timesteps))
-        model.save(saved_model_filename)
+        model.save(SAVED_MODEL_FILENAME)
 
     # Log scalar values
     if 'info' in _locals.keys():
@@ -56,18 +43,36 @@ def callback(_locals, _globals):
 
 
 def main():
+    global model
     # Learn from previous run
-    if os.path.isfile(saved_model_filename):
-        logging.info("Loading model from file: " + saved_model_filename)
-        model.load(saved_model_filename, env=env)
+    if isfile(SAVED_MODEL_FILENAME):
+        logging.info("Loading model from file: " + SAVED_MODEL_FILENAME)
+        model = DQN.load(SAVED_MODEL_FILENAME,
+                         env=env,
+                         verbose=0,
+                         tensorboard_log=TENSORBOARD_LOG_DIR,
+                         buffer_size=REPLAY_BUFFER_SIZE)
     else:
         logging.info("Creating model from scratch...")
+        model = DQN(CnnPolicy,
+                    env,
+                    verbose=0,
+                    tensorboard_log=TENSORBOARD_LOG_DIR,
+                    buffer_size=REPLAY_BUFFER_SIZE)
 
     model.learn(total_timesteps=TOTAL_TIMESTEPS, callback=callback)
-    model.save(saved_model_filename)
+    model.save(SAVED_MODEL_FILENAME)
 
     obs = env.reset()
 
 
 if __name__ == '__main__':
+    # Setup logging
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S')
+    logger = logging.getLogger(__name__)
+
+    env = make_env()
+    model = None
     main()
