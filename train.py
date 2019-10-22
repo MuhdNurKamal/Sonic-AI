@@ -3,7 +3,6 @@ from os.path import isfile
 from sonic_util import make_env
 from stable_baselines.deepq.policies import CnnPolicy
 from stable_baselines import DQN
-import numpy as np
 import tensorflow as tf
 import logging
 from sys import argv
@@ -16,7 +15,9 @@ REPLAY_BUFFER_SIZE = 1e6
 DEFAULT_SAVED_MODEL_FILENAME = "sonic_stable_dqn.zip"
 DECORATOR = ("*" * 100 + "\n") * 5
 saved_model_name = DEFAULT_SAVED_MODEL_FILENAME
-
+length_successes = 0
+min_timestep_completion = 4500
+curr_timestep_in_ep = 0
 
 def callback(_locals, _globals):
     """
@@ -24,7 +25,20 @@ def callback(_locals, _globals):
     :param _locals: (dict)
     :param _globals: (dict)
     """
+    global length_successes, curr_timestep_in_ep
     self_ = _locals['self']
+
+    curr_timestep_in_ep += 1
+
+    if len(_locals.get("episode_successes")) > length_successes:
+        length_successes = len(_locals.get("episode_successes"))
+        logger.info("Saving best model, completing in " + str(curr_timestep_in_ep) + " timesteps"+ "Trained for total "
+                    + str(self_.num_timesteps) + " timesteps")
+        best_model_name = "total_" +str(self_.num_timesteps) + "_time_" + str(curr_timestep_in_ep)
+        model.save(best_model_name)
+
+    if _locals.get("done"):
+        curr_timestep_in_ep = 0
 
     # Log every step_logging_freq
     if self_.num_timesteps % STEP_LOGGING_FREQ == 0:
