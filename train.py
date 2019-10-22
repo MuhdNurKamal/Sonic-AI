@@ -25,13 +25,14 @@ def callback(_locals, _globals):
     :param _locals: (dict)
     :param _globals: (dict)
     """
-    global length_successes, curr_timestep_in_ep
+    global length_successes, curr_timestep_in_ep, min_timestep_completion
     self_ = _locals['self']
 
     curr_timestep_in_ep += 1
 
-    if len(_locals.get("episode_successes")) > length_successes:
+    if len(_locals.get("episode_successes")) > length_successes and curr_timestep_in_ep < min_timestep_completion:
         length_successes = len(_locals.get("episode_successes"))
+        min_timestep_completion = curr_timestep_in_ep
         logger.info("Saving best model, completing in " + str(curr_timestep_in_ep) + " timesteps"+ "Trained for total "
                     + str(self_.num_timesteps) + " timesteps")
         best_model_name = "total_" +str(self_.num_timesteps) + "_time_" + str(curr_timestep_in_ep)
