@@ -19,6 +19,7 @@ length_successes = 0
 min_timestep_completion = 4500
 curr_timestep_in_ep = 0
 
+
 def callback(_locals, _globals):
     """
     Callback called at each step (for DQN an others) or after n steps (see ACER or PPO2)
@@ -75,11 +76,13 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S')
     logger = logging.getLogger(__name__)
 
-    env = make_env()
     model = None
 
     print(DECORATOR)
-    if len(argv) == 1:
+    if len(argv) == 3:
+        zone = argv[1]
+        act = argv[2]
+        env = make_env(zone=zone, act=act)
         if isfile(saved_model_name):
             logging.info("Loading model from file: " + saved_model_name)
             model = DQN.load(saved_model_name,
@@ -94,8 +97,11 @@ if __name__ == '__main__':
                         verbose=0,
                         tensorboard_log=TENSORBOARD_LOG_DIR,
                         buffer_size=REPLAY_BUFFER_SIZE)
-    elif len(argv) == 2:
+    elif len(argv) == 4:
         saved_model_name = argv[1]
+        zone = argv[2]
+        act = argv[3]
+        env = make_env(zone=zone, act=act)
         if isfile(saved_model_name) and saved_model_name.endswith(".zip"):
             logging.info("Loading model from file: " + saved_model_name)
             model = DQN.load(saved_model_name,
@@ -104,10 +110,12 @@ if __name__ == '__main__':
                              tensorboard_log=TENSORBOARD_LOG_DIR,
                              buffer_size=REPLAY_BUFFER_SIZE)
         else:
-            logger.warning("Usage: \npython train.py \nOR\npython train.py model_to_load_from.zip")
+            logger.warning("Usage: \npython train.py zone act\nOR\npython train.py model_to_load_from.zip "
+                           "zone act")
             exit()
     else:
-        logger.warning("Usage: \npython train.py \nOR\npython train.py model_to_load_from.zip")
+        logger.warning("Usage: \npython train.py zone act\nOR\npython train.py model_to_load_from.zip zone "
+                       "act")
         exit()
 
     main()

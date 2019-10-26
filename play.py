@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    env = make_env()
+    zone = sys.argv[2]
+    act = sys.argv[3]
+    env = make_env(zone=zone, act=act)
     max_screen_x = 0
 
     model = DQN.load(saved_model_file_path)
@@ -32,8 +34,8 @@ def main():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        logger.warning("Usage: python play.py saved_model_file_path")
+    if len(sys.argv) != 4:
+        logger.warning("Usage: python play.py saved_model_file_path zone act")
         exit()
 
     saved_model_file_path = sys.argv[1]
